@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Styled Components</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      function component(strings, ...dynamicValues) {
+        return function (props) {
+          let newContent = strings.slice();
+          dynamicValues.forEach((value, index) => {
+            newContent[index] += props[value];
+          });
+          return newContent.join('');
+        };
+      }
+
+      function createStyleAPI(tag) {
+        return (styles) => (content) =>
+          `<${tag} style="${styles}">${content}</${tag}>`;
+      }
+
+      const tags = ['h1', 'h2', 'h3', 'p', 'div'];
+      function ObjectStyled(tags) {
+        return tags.reduce(
+          (acc, tag) => ({ ...acc, [tag]: createStyleAPI(tag) }),
+          {}
+        );
+      }
+
+      const styled = ObjectStyled(tags);
+      console.log(styled);
+
+      const TitleStyled = styled.h1`
+        color: orange;
+        font-family: system-ui;
+        font-size: 50px;
+        text-shadow: 2px 2px 0 black;
+        line-height: 100vh;
+      `;
+
+      const props = {
+        message: 'No te rindas',
+      };
+
+      const Title = component`<marquee> ${'message'} </marquee>`(props);
+
+      function render(component, container) {
+        container.innerHTML = component;
+      }
+
+      render(TitleStyled(Title), window.container);
+    </script>
+  </body>
+</html>
